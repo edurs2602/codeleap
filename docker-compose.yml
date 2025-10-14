@@ -1,0 +1,26 @@
+services:
+  web:
+    build: .
+    command: >
+      sh -c "
+        sleep 10 &&
+        python /codeleap/codeleap/manage.py migrate --noinput &&
+        python /codeleap/codeleap/manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - .:/codeleap
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5432:5432"
