@@ -1,0 +1,42 @@
+name: Django CI - SQLite
+
+on:
+  push:
+    branches:
+      - main
+      - feat/*
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-django
+
+      - name: Run migrations on SQLite
+        run: |
+          source venv/bin/activate
+          export DATABASE_URL="sqlite:///db.sqlite3"
+          python codeleap/manage.py migrate --noinput
+
+      - name: Run tests
+        run: |
+          source venv/bin/activate
+          export DATABASE_URL="sqlite:///db.sqlite3"
+          cd codeleap
+          pytest --disable-warnings
