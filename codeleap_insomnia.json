@@ -1,0 +1,114 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-10-20T18:30:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2025.2.0",
+  "resources": [
+    {
+      "_id": "wrk_codeleap",
+      "_type": "workspace",
+      "name": "Codeleap API",
+      "description": "Workspace to test all Codeleap API endpoints"
+    },
+    {
+      "_id": "req_post_create",
+      "_type": "request",
+      "parentId": "wrk_codeleap",
+      "name": "Create Post (with optional image)",
+      "method": "POST",
+      "url": "http://localhost:8000/careers/",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          { "name": "username", "value": "john_doe", "type": "text" },
+          {
+            "name": "title",
+            "value": "My First Post with Image",
+            "type": "text"
+          },
+          {
+            "name": "content",
+            "value": "This is the content of the post.",
+            "type": "text"
+          },
+          { "name": "image", "value": "/path/to/image.jpg", "type": "file" }
+        ]
+      },
+      "headers": [{ "name": "Accept", "value": "application/json" }]
+    },
+    {
+      "_id": "req_post_list",
+      "_type": "request",
+      "parentId": "wrk_codeleap",
+      "name": "List Posts",
+      "method": "GET",
+      "url": "http://localhost:8000/careers/",
+      "headers": [{ "name": "Accept", "value": "application/json" }]
+    },
+    {
+      "_id": "req_post_list_filter",
+      "_type": "request",
+      "parentId": "wrk_codeleap",
+      "name": "List Posts by Username",
+      "method": "GET",
+      "url": "http://localhost:8000/careers/?username=john_doe",
+      "headers": [{ "name": "Accept", "value": "application/json" }]
+    },
+    {
+      "_id": "req_post_patch",
+      "_type": "request",
+      "parentId": "wrk_codeleap",
+      "name": "Update Post (PATCH)",
+      "method": "PATCH",
+      "url": "http://localhost:8000/careers/1/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"title\": \"Updated Title\",\"content\": \"Updated content\"}"
+      },
+      "headers": [{ "name": "Content-Type", "value": "application/json" }]
+    },
+    {
+      "_id": "req_post_delete",
+      "_type": "request",
+      "parentId": "wrk_codeleap",
+      "name": "Delete Post",
+      "method": "DELETE",
+      "url": "http://localhost:8000/careers/1/",
+      "headers": [{ "name": "Accept", "value": "application/json" }]
+    },
+    {
+      "_id": "req_post_like",
+      "_type": "request",
+      "parentId": "wrk_codeleap",
+      "name": "Like Post",
+      "method": "POST",
+      "url": "http://localhost:8000/careers/1/like/",
+      "headers": [{ "name": "Accept", "value": "application/json" }]
+    },
+    {
+      "_id": "req_post_unlike",
+      "_type": "request",
+      "parentId": "wrk_codeleap",
+      "name": "Unlike Post",
+      "method": "POST",
+      "url": "http://localhost:8000/careers/1/unlike/",
+      "headers": [{ "name": "Accept", "value": "application/json" }]
+    },
+    {
+      "_id": "req_comment_create",
+      "_type": "request",
+      "parentId": "wrk_codeleap",
+      "name": "Create Comment",
+      "method": "POST",
+      "url": "http://localhost:8000/careers/1/comments/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"content\": \"This is a comment\"}"
+      },
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" }
+      ]
+    }
+  ]
+}
