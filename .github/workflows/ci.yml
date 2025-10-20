@@ -1,4 +1,4 @@
-name: Django CI
+name: Django CI - SQLite
 
 on:
   push:
@@ -12,29 +12,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Compose
-        uses: docker/setup-buildx-action@v2
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
 
-      - name: Build and start services
+      - name: Install dependencies
         run: |
-          docker-compose up -d --build
-          echo "Waiting for PostgreSQL to be ready..."
-          # espera o PostgreSQL aceitar conexões
-          until docker exec db pg_isready -U myuser -d mydatabase; do
-            sleep 2
-          done
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-django
 
-      - name: Run migrations
+      - name: Run migrations on SQLite
         run: |
-          docker-compose exec web codeleap/python manage.py migrate --noinput
+          source venv/bin/activate
+          export DATABASE_URL="sqlite:///db.sqlite3"
+          python codeleap/manage.py migrate --noinput
 
       - name: Run tests
         run: |
-          docker-compose exec web pytest --disable-warnings
-
-      - name: Stop services
-        if: always()
-        run: docker-compose down
+          source venv/bin/activate
+          export DATABASE_URL="sqlite:///db.sqlite3"
+          pytest --disable-warnings
