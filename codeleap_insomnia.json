@@ -103,7 +103,7 @@
       "url": "http://localhost:8000/careers/1/comments/",
       "body": {
         "mimeType": "application/json",
-        "text": "{\"content\": \"This is a comment\"}"
+        "text": "{\n    \"username\": \"john_doe\",\n    \"content\": \"This is a comment!\"\n}"
       },
       "headers": [
         { "name": "Content-Type", "value": "application/json" },
