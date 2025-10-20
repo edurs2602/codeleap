@@ -6,62 +6,35 @@ on:
       - main
       - feat/*
   pull_request:
-    branches:
-      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: mydatabase
-          POSTGRES_USER: myuser
-          POSTGRES_PASSWORD: mypassword
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U myuser -d mydatabase"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      DATABASE_URL: postgres://myuser:mypassword@localhost:5432/mydatabase
-      SECRET_KEY: test-secret-key
-      DEBUG: "True"
-      ALLOWED_HOSTS: "localhost,127.0.0.1"
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.13"
+      - name: Set up Docker Compose
+        uses: docker/setup-buildx-action@v2
 
-      - name: Install dependencies
+      - name: Build and start services
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Wait for PostgreSQL
-        run: |
-          until pg_isready -h localhost -p 5432 -U myuser; do
-            echo "Waiting for PostgreSQL..."
+          docker-compose up -d --build
+          echo "Waiting for PostgreSQL to be ready..."
+          # espera o PostgreSQL aceitar conexões
+          until docker exec db pg_isready -U myuser -d mydatabase; do
             sleep 2
           done
 
-      - name: Apply migrations
+      - name: Run migrations
         run: |
-          source venv/bin/activate
-          python codeleap/manage.py migrate --noinput
+          docker-compose exec web codeleap/python manage.py migrate --noinput
 
       - name: Run tests
         run: |
-          source venv/bin/activate
-          pytest --disable-warnings --maxfail=1
+          docker-compose exec web pytest --disable-warnings
+
+      - name: Stop services
+        if: always()
+        run: docker-compose down
