@@ -38,4 +38,5 @@ jobs:
         run: |
           source venv/bin/activate
           export DATABASE_URL="sqlite:///db.sqlite3"
+          cd codeleap
           pytest --disable-warnings
